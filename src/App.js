@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 import { ethers } from "ethers";
 import InfosAccount from './components/InfosAccount';
+import firebase from './Firebase';
 import './App.css';
+
+const ref = firebase.firestore().collection('whitelist');
 
 function App() {
 
+  const [countData, SetCountData] = useState(0);
   const [loader, setLoader] = useState(true);
   const [accounts, setAccounts] = useState([]);
   const [balance, setBalance] = useState();
@@ -14,6 +18,7 @@ function App() {
   useEffect(() => {
     getAccounts();
     setLoader(false);
+    getCount();
   }, [])
 
   window.ethereum.addListener('connect', async(response) =>{
@@ -33,6 +38,14 @@ function App() {
     window.location.reload();
   })
 
+  // Get the number of users in the whitelist
+  function getCount() {
+    ref.get().then(function(querySnapshot) {
+      SetCountData(querySnapshot.size);
+    })
+  }
+
+
   async function getAccounts() {
     if(typeof window.ethereum !== 'undefined') {
       let accounts = await window.ethereum.request({ method: 'eth_requestAccounts'}); 
@@ -51,4 +64,5 @@ function App() {
   );
 }
 
+export {ref}
 export default App;
