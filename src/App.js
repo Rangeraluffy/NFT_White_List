@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ethers } from "ethers";
+import InfosAccount from './components/InfosAccount';
 import './App.css';
 
 function App() {
@@ -36,17 +37,16 @@ function App() {
     if(typeof window.ethereum !== 'undefined') {
       let accounts = await window.ethereum.request({ method: 'eth_requestAccounts'}); 
       setAccounts(accounts);
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const balance = await provider.getBalance(accounts[0]);
+      const balanceInEth = ethers.utils.formatEther(balance);
+      setBalance(balanceInEth);
     }
   }
 
   return (
     <div className="App">
-      {!loader &&
-       accounts.length > 0 ?
-       <p>You are connect with this account : {accounts[0]}</p>
-       :
-       <p>You are not connected with Metamask to this website.</p>
-     }
+      <InfosAccount accounts={accounts} balance={balance} loader={loader}/>
     </div>
   );
 }
