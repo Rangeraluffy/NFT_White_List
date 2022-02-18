@@ -10,6 +10,17 @@ function App() {
   const [succes, setSucces] = useState('');
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    getAccounts();
+  }, [])
+
+  async function getAccounts() {
+    if(typeof window.ethereum !== 'undefined') {
+      let accounts = await window.ethereum.request({ method: 'eth_requestAccounts'});
+      console.log(accounts);
+    }
+  }
+
   return (
     <div className="App">
 
